@@ -31,3 +31,24 @@ GSMs <- raw[,2]
 GSMs <- GSMs[grep(".CEL",GSMs)]
 affy <- ReadAffy(filenames = as.character(GSMs), compress = T,celfile.path = "GSE16759")
 
+###################################
+
+gene <- GeneSymbol("GPL570")
+
+########## FUNCION ################
+
+rma <- rma(affy)
+eset <- ProbeFilter(rma,gene)
+y=c(rep(1,4),rep(0,4))
+matrix <- as.matrix(eset)
+sam <- sam(matrix,y)
+
+#################################
+
+######### FUNCION ###############
+plot(sam,1)
+sum <- summary(sam,1,entrez=F)
+dif.exp <- sum@row.sig.genes
+
+################################
+
