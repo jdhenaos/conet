@@ -25,3 +25,9 @@ getGEOfile("GPL570", destdir = ".")
 
 ############# FUNCION ##############
 
+raw <- read.table(file = paste0("GSE16759/","filelist.txt"),sep = "\t",
+                  header = T,comment.char = "#",stringsAsFactors = F)
+GSMs <- raw[,2]
+GSMs <- GSMs[grep(".CEL",GSMs)]
+affy <- ReadAffy(filenames = as.character(GSMs), compress = T,celfile.path = "GSE16759")
+
