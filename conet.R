@@ -15,7 +15,7 @@ GetInfo <- function(GSE,GPL,dir="."){
     getGEOSuppFiles(i)
   }
   
-  files <- dir(".")[grep("GSE",dir("."))]
+  files <- dir(".")[grep("^GSE[0-9]",dir("."))]
   
   for(j in files){
     untar(paste0(j,"/",j,"_RAW.tar"), exdir = paste0(j,"/"))
@@ -39,16 +39,17 @@ getaffy <- function(GSE){
 
 ###################################
 
-gene <- GeneSymbol("GPL570")
-
 ########## FUNCION ################
 
-difexprs <- function(affy,treatment){
+difexprs <- function(affy,treatment,GPL){
+
   rma <- rma(affy)
+  gene <- GeneSymbol(GPL)
+  print("summarizing")
   eset <- ProbeFilter(rma,gene)
-  y=treatment
   matrix <- as.matrix(eset)
-  sam <- sam(matrix,y)
+  pint("Differential analysis")
+  sam <- sam(matrix,treatment)
   return(sam)
 }
 
@@ -58,11 +59,22 @@ difexprs <- function(affy,treatment){
 ######### FUNCION ###############
 
 getdifexprs <- function(sam,delta){
-  plot(sam,1)
-  sum <- summary(sam,1,entrez=F)
+  plot(sam,delta)
+  sum <- summary(sam,delta,entrez=F)
   dif.exp <- sum@row.sig.genes
   return(dif.exp)
 }
 
 ################################
 
+Aarray <- getaffy(GSE = "GSE8216")
+t <- c(rep(1,6),rep(0,3))
+Adife <- difexprs(affy = Parray,treatment = t)
+Agenes <- getdifexprs(sam = Pdife,delta = 0.5)
+
+###############################
+
+GetInfo(GSE = "GSE8216",GPL = "GPL2025")
+testarray <- getaffy(GSE = "GSE8216")
+testtrait <- c(1,1,1,0,0,0)
+testdif <- difexprs(affy = testarray,treatment = testtrait,GPL = "GPL2025")
