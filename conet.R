@@ -20,7 +20,6 @@ GetInfo <- function(GSE,GPL,dir="."){
   for(j in files){
     untar(paste0(j,"/",j,"_RAW.tar"), exdir = paste0(j,"/"))
   }
-  
   getGEOfile(GPL, destdir = ".")
 }
 
@@ -35,9 +34,8 @@ getaffy <- function(GSE){
   GSMs <- GSMs[grep(".CEL",GSMs)]
   affy <- ReadAffy(filenames = as.character(GSMs), compress = T,
                    celfile.path = GSE)
-  
+  return(affy)
 }
-
 
 ###################################
 
@@ -51,15 +49,20 @@ difexprs <- function(affy,treatment){
   y=treatment
   matrix <- as.matrix(eset)
   sam <- sam(matrix,y)
+  return(sam)
 }
 
 
 #################################
 
 ######### FUNCION ###############
-plot(sam,1)
-sum <- summary(sam,1,entrez=F)
-dif.exp <- sum@row.sig.genes
+
+getdifexprs <- function(sam,delta){
+  plot(sam,1)
+  sum <- summary(sam,1,entrez=F)
+  dif.exp <- sum@row.sig.genes
+  return(dif.exp)
+}
 
 ################################
 
