@@ -2,6 +2,7 @@ library(affy)
 library(siggenes)
 library(GEOquery)
 library(vsn)
+library(igraph)
 
 alzGSM <- read.table("Alzheimer_Chips.txt",stringsAsFactors = F)
 
@@ -72,9 +73,24 @@ Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
 
 ###############################
 
+####### FUNCION #############
 
+simil <- abs(cor(t(genes),use =  "pairwise.complete.obs"))
 
+Ady <- matrix(0,nrow=nrow(genes),ncol=nrow(genes))
 
+for(i in 1:nrow(genes)){  
+  Ady[which(simil[,i]>=0.9),i]<-1
+  Ady[which(simil[,i]<0.9),i]<-0
+}
+
+colnames(Ady)<-rownames(Ady)<-rownames(genes)
+
+diag(Ady)<-0
+
+net <- graph.adjacency(Ady,mode = "undirected", diag = F)
+
+##################################################
 
 testarray <- getaffy(GSE = "GSE8216")
 testtrait <- c(1,1,1,1,0,0,0,0)
