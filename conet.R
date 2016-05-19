@@ -41,41 +41,41 @@ getaffy <- function(GSE){
 
 ########## FUNCION ################
 
-difexprs <- function(affy,treatment,GPL){
+difexprs <- function(affy,treatment){
   
-  gene <- GeneSymbol(GPL)
+  #gene <- GeneSymbol(GPL)
   rma <- rma(affy)
   print("summarizing")
   eset <- ProbeFilter(rma,gene)
   matrix <- as.matrix(eset)
   print("Differential analysis")
   sam <- sam(matrix,treatment)
+  
+  plot(sam,delta)
+  sum <- summary(sam,delta,entrez=F)
+  dif.exp <- sum@row.sig.genes
   return(sam)
 }
 
 
 #################################
 
-######### FUNCION ###############
-
-getdifexprs <- function(sam,delta){
-  plot(sam,delta)
-  sum <- summary(sam,delta,entrez=F)
-  dif.exp <- sum@row.sig.genes
-  return(dif.exp)
-}
 
 ################################
 
-Aarray <- getaffy(GSE = "GSE8216")
-t <- c(rep(1,6),rep(0,3))
-Adife <- difexprs(affy = Parray,treatment = t)
-Agenes <- getdifexprs(sam = Pdife,delta = 0.5)
+Aarray <- getaffy(GSE = "GSE28379")
+t <- c(rep(0,8),rep(1,22))
+#gene <- GeneSymbol("GPL570")
+Adife <- difexprs(affy = Aarray,treatment = t)
+Agenes <- getdifexprs(sam = Adife,delta = 1)
 
 ###############################
 
-GetInfo(GSE = "GSE8216",GPL = "GPL2025")
+
+
+
+
 testarray <- getaffy(GSE = "GSE8216")
-testtrait <- c(1,1,1,0,0,0)
-testdif <- difexprs(affy = testarray,treatment = testtrait,GPL = "GPL2025")
+testtrait <- c(1,1,1,1,0,0,0,0)
+testdif <- difexprs(affy = testarray,treatment = testtrait,GPL = "GPL570")
 testgenes <- getdifexprs(sam = testdif,delta = 1)
