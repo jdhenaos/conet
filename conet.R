@@ -41,8 +41,7 @@ getaffy <- function(GSE){
 
 ########## FUNCION ################
 
-difexprs <- function(affy,treatment){
-  
+difexprs <- function(affy,treatment,fdr){
   #gene <- GeneSymbol(GPL)
   rma <- rma(affy)
   print("summarizing")
@@ -50,24 +49,26 @@ difexprs <- function(affy,treatment){
   matrix <- as.matrix(eset)
   print("Differential analysis")
   sam <- sam(matrix,treatment)
-  
+  tab <- show(sam)
+  mtab <- as.matrix(data.frame(tab$Delta,tab$FDR))
+  filt <- mtab[mtab[,2]<=fdr,]
+  delta <- as.numeric(filt[1,1])
   plot(sam,delta)
   sum <- summary(sam,delta,entrez=F)
-  dif.exp <- sum@row.sig.genes
-  return(sam)
+  dife <- sum@row.sig.genes
+  genes <- eset[dife,]
+  return(genes)
 }
-
 
 #################################
 
 
 ################################
 
-Aarray <- getaffy(GSE = "GSE28379")
+Aarray <- getaffy(GSE = "GSE28146")
 t <- c(rep(0,8),rep(1,22))
 #gene <- GeneSymbol("GPL570")
-Adife <- difexprs(affy = Aarray,treatment = t)
-Agenes <- getdifexprs(sam = Adife,delta = 1)
+Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
 
 ###############################
 
