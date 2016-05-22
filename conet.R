@@ -117,28 +117,32 @@ CreateNet <- function(difexp){
   
   C <- na.omit(C)
   
-  fitvec <- list()
+  fit <-1
   
   for (z in as.vector(C)) {
-    Ad <- matrix(0,ncol = nrow(simil),nrow = nrow(simil))
+    ad <- matrix(0,ncol = nrow(simil),nrow = nrow(simil))
     
     for(i in 1:nrow(simil)){
-      Ad[which(simil[,i]>=z),i]<-1
-      Ad[which(simil[,i]<z),i]<-0
+      ad[which(simil[,i]>=z),i]<-1
+      ad[which(simil[,i]<z),i]<-0
     }
     
-    colnames(Ad)<-rownames(Ad)<-rownames(simil)
-    diag(Ad)<-0
-    Gr=graph.adjacency(Ad,mode="undirected",add.colnames=NULL,diag=FALSE)
-    fit <- fit_power_law(degree(Gr))
-    fitvec[as.character(z)] <- fit$KS.p
+    diag(ad)<-0
+    gr=graph.adjacency(ad,mode="undirected",diag=FALSE)
+    
+    pvalue <- fit_power_law(degree(gr)) 
+    
+    if(pvalue$KS.p < fit ){
+      fit <- pvalue$KS.p
+      value <- z                     
+    }
   }
   
   Ad <- matrix(0,ncol = nrow(simil),nrow = nrow(simil))
   
   for(i in 1:nrow(simil)){
-    Ad[which(simil[,i]>=C[1]),i]<-1
-    Ad[which(simil[,i]<C[1]),i]<-0
+    Ad[which(simil[,i]>=value),i]<-1
+    Ad[which(simil[,i]<value),i]<-0
   }
   
   colnames(Ad)<-rownames(Ad)<-rownames(simil)
