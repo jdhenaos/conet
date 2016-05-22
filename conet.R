@@ -79,23 +79,40 @@ simil <- abs(cor(t(Adife),use =  "pairwise.complete.obs"))
 
 pcv <- seq(0.01,0.99,by = 0.01)
 
-ady <- matrix(0,ncol = ncol(simil), nrow = nrow(simil))
+Cis <- vector()
+C0s <- vector()
 
-for(i in 1:nrow(simil)){
-  ady[which(simil[,i]>=0.5),i]<-1
-  ady[which(simil[,i]<0.5),i]<-0
+count <- 1
+
+for (val in pcv) {
+  ady <- matrix(0,ncol = ncol(simil), nrow = nrow(simil))
+  
+  for(i in 1:nrow(simil)){
+    ady[which(simil[,i]>=val),i]<-1
+    ady[which(simil[,i]<val),i]<-0
+  }
+  
+  G = graph.adjacency(ady,mode="undirected",diag=FALSE)
+  
+  Ci <- transitivity(G,type = "globalundirected")
+  
+  if(is.nan(Ci)){Ci <- 0}
+  
+  K1 <- sum(degree(G,loops = F))
+  K2 <- sum(degree(G,loops = F)^2)
+  k1 <- (1/length(V(G)))*K1
+  k2 <- (1/length(V(G)))*K2
+  
+  C0 <- ((k2-k1)^2)/(k1^3*length(V(G)))
+  
+  if(is.nan(C0)){C0 <- 0}
+  
+  Cis[count] <- Ci
+  C0s[count] <- C0
+  count <- count + 1
 }
 
-G = graph.adjacency(ady,mode="undirected",diag=FALSE)
 
-Ci <- transitivity(G,type = "globalundirected")
-
-K1 <- sum(degree(G,loops = F))
-K2 <- sum(degree(G,loops = F)^2)
-k1 <- (1/length(V(G)))*K1
-k2 <- (1/length(V(G)))*K2
-
-C0 <- ((k2-k1)^2)/(k1^3*length(V(G)))
 
 ##################################################
 
