@@ -79,11 +79,17 @@ simil <- abs(cor(t(Adife),use =  "pairwise.complete.obs"))
 
 pcv <- seq(0.01,0.99,by = 0.01)
 
-ady <- matrix(0,ncol = nrow(simil), nrow = nrow(simil))
+ady <- matrix(0,ncol = ncol(simil), nrow = nrow(simil))
+
 for(i in nrow(simil)){
-  ady[wich(simil[,i]>=pcv)] <- 1
-  ady[wich(simil[,i]<pcv)] <- 0
+  ady[which(simil[,i]>=0.5),i]<-1
+  ady[which(simil[,i]<0.5),i]<-0
 }
+
+G = graph.adjacency(ady,mode="undirected",diag=FALSE)
+
+write.graph(G,file = "prueba.txt",format = "ncol")
+
 
 ##################################################
 
