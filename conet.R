@@ -67,6 +67,9 @@ difexprs <- function(affy,treatment,fdr){
 ####### FUNCION #############
 
 CreateNet <- function(difexp){
+  
+  difexp <- Adife
+  
   simil <- abs(cor(t(difexp),use =  "pairwise.complete.obs"))
   
   pcv <- seq(0.01,0.99,by = 0.01)
@@ -114,6 +117,23 @@ CreateNet <- function(difexp){
   
   C <- na.omit(C)
   
+  fitvec <- list()
+  
+  for (z in as.vector(C)) {
+    Ad <- matrix(0,ncol = nrow(simil),nrow = nrow(simil))
+    
+    for(i in 1:nrow(simil)){
+      Ad[which(simil[,i]>=z),i]<-1
+      Ad[which(simil[,i]<z),i]<-0
+    }
+    
+    colnames(Ad)<-rownames(Ad)<-rownames(simil)
+    diag(Ad)<-0
+    Gr=graph.adjacency(Ad,mode="undirected",add.colnames=NULL,diag=FALSE)
+    fit <- fit_power_law(degree(Gr))
+    fitvec[as.character(z)] <- fit$KS.p
+  }
+  
   Ad <- matrix(0,ncol = nrow(simil),nrow = nrow(simil))
   
   for(i in 1:nrow(simil)){
@@ -129,8 +149,12 @@ CreateNet <- function(difexp){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSE28146")
+Aarray <- getaffy(GSE = "GSE8216")
 t <- c(rep(0,8),rep(1,22))
-gene <- GeneSymbol("GPL570")
-Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
+t <- c(0,1,0,1)
+t <- c(0,0,0,1,1,1)
+getGEOfile("GPL2025",destdir = ".")
+gene <- GeneSymbol("GPL2025")
+Adife <- difexprs(affy = data,treatment = t,fdr = 0.2)
 Anet <- CreateNet(difexp = Adife)
+write.graph(Anet,file = "NEWNET.txt",format = "ncol")
