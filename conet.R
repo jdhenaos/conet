@@ -68,27 +68,22 @@ difexprs <- function(affy,treatment,fdr){
 
 Aarray <- getaffy(GSE = "GSE28146")
 t <- c(rep(0,8),rep(1,22))
-#gene <- GeneSymbol("GPL570")
+gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
 
 ###############################
 
 ####### FUNCION #############
 
-simil <- abs(cor(t(genes),use =  "pairwise.complete.obs"))
+simil <- abs(cor(t(Adife),use =  "pairwise.complete.obs"))
 
-Ady <- matrix(0,nrow=nrow(genes),ncol=nrow(genes))
+pcv <- seq(0.01,0.99,by = 0.01)
 
-for(i in 1:nrow(genes)){  
-  Ady[which(simil[,i]>=0.9),i]<-1
-  Ady[which(simil[,i]<0.9),i]<-0
+ady <- matrix(0,ncol = nrow(simil), nrow = nrow(simil))
+for(i in nrow(simil)){
+  ady[wich(simil[,i]>=pcv)] <- 1
+  ady[wich(simil[,i]<pcv)] <- 0
 }
-
-colnames(Ady)<-rownames(Ady)<-rownames(genes)
-
-diag(Ady)<-0
-
-net <- graph.adjacency(Ady,mode = "undirected", diag = F)
 
 ##################################################
 
