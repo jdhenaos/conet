@@ -6,6 +6,49 @@ library(igraph)
 
 alzGSM <- read.table("Alzheimer_Chips.txt",stringsAsFactors = F)
 
+############# FUNCION ###############
+
+meanProbe <- function(gene,array){
+  marray <- as.data.frame(exprs(array))
+  row.names(gene) <- gene$sym.ID
+  pl <- gene[row.names(array),]
+  names(pl) <- c("probe","gene")
+  cl <- cbind(pl,marray)
+  fl <- cl[grep(paste0("^","$"),cl$gene,invert = T),]
+  fl <- na.omit(fl)
+  g <- data.frame()
+  
+  for(i in unique(fl$gene)){
+    e <- fl[grep(paste0("^",i,"$"),fl$gene),]
+    f <- sapply(e[,3:dim(e)[2]],median)
+    
+    if(length(g) == 0){
+      g <- rbind(as.data.frame(t(f),row.names = i))
+    }else{
+      g <- rbind(g,as.data.frame(t(f),row.names = i))
+    }
+  }
+  return(g)
+}
+
+####################################
+
+############# FUNCION ##############
+
+GeneSymbol <- function(GPL, d = "."){
+  # Va al directorio donde esta el archivo GPL
+  setwd(d)
+  # Extrae la informacion del archivo .soft
+  gpl <- getGEO(filename = paste0(GPL,".soft"))
+  # Crea una tabla con todos los datos en el GPL
+  sym <- Table(gpl)
+  # Crea un data.frame con las sondas asociadas al gen al que corresponden
+  ta <- data.frame(sym$ID, sym$`Gene Symbol`, stringsAsFactors = F)
+  return(ta)
+}
+
+#####################################
+
 ############# FUNCION ##############
 
 GetInfo <- function(GSE,GPL,dir="."){
