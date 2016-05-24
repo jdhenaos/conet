@@ -59,7 +59,7 @@ GetInfo <- function(GSE,GPL,dir="."){
     getGEOSuppFiles(i)
   }
   
-  files <- dir(".")[grep("^GSE[0-9]",dir("."))]
+  files <- dir(".")[grep("^GSE[0-9]",dir("."),ignore.case = T)]
   
   for(j in files){
     untar(paste0(j,"/",j,"_RAW.tar"), exdir = paste0(j,"/"))
@@ -75,7 +75,7 @@ getaffy <- function(GSE){
   raw <- read.table(file = paste0(GSE,"/","filelist.txt"),sep = "\t",
                     header = T,comment.char = "#",stringsAsFactors = F)
   GSMs <- raw[,2]
-  GSMs <- GSMs[grep(".CEL",GSMs)]
+  GSMs <- GSMs[grep(".CEL",GSMs,ignore.case = T)]
   affy <- ReadAffy(filenames = as.character(GSMs), compress = T,
                    celfile.path = GSE)
   return(affy)
@@ -198,6 +198,6 @@ CreateNet <- function(difexp){
 Aarray <- getaffy(GSE = "GSETOTAL")
 t <- c(rep(0,6),rep(1,12))
 gene <- GeneSymbol("GPL570")
-Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.45)
+Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
 Anet <- CreateNet(difexp = Adife)
 write.graph(Anet,file = "GSE29652NET.txt",format = "ncol")
