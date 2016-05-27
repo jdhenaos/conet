@@ -196,8 +196,8 @@ CreateNet <- function(difexp){
 ##################################################
 
 Aarray <- getaffy(GSE = "GSETOTAL")
-t <- c(rep(0,6),rep(1,12))
+t <- rea
 gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
 Anet <- CreateNet(difexp = Adife)
-write.graph(Anet,file = "GSE29652NET.txt",format = "ncol")
+write.graph(Anet,file = "ALZNET.txt",format = "ncol")
