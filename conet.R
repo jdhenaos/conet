@@ -18,14 +18,10 @@ medianProbe <- function(gene,array){
   g <- data.frame()
   
   for(i in unique(na.omit(wowithw$gene.gene))){
-    e <- fl[grep(paste0("^",i,"$"),fl$gene),]
-    f <- sapply(e[,3:dim(e)[2]],median)
     
-    if(length(g) == 0){
-      g <- rbind(as.data.frame(t(f),row.names = i))
-    }else{
-      g <- rbind(g,as.data.frame(t(f),row.names = i))
-    }
+    a <- as.data.frame(t(sapply(wowithw[wowithw$gene.gene == i,2:ncol(wowithw)],median))
+                  ,row.names = i)
+    g <- rbind.data.frame(g,a)
   }
   return(g)
 }
@@ -36,7 +32,6 @@ medianProbe <- function(gene,array){
 
 GeneSymbol <- function(GPL, d = "."){
   # Va al directorio donde esta el archivo GPL
-  GPL = "GPL570"
   setwd(d)
   # Extrae la informacion del archivo .soft
   gpl <- getGEO(filename = paste0(GPL,".soft"))
@@ -73,7 +68,6 @@ GetInfo <- function(GSE,GPL,dir="."){
 ############# FUNCION ##############
 
 getaffy <- function(GSE){
-  GSE <- "GSEPRUEBA"
   raw <- read.table(file = paste0(GSE,"/","filelist.txt"),sep = "\t",
                     header = T,comment.char = "", stringsAsFactors = F)
   GSMs <- raw$Name[grep(".CEL",raw$Name,ignore.case = T)]
@@ -90,6 +84,7 @@ difexprs <- function(affy,treatment,fdr){
   #gene <- GeneSymbol(GPL
   affy <- Aarray
   treatment <- c(1,1,0,0)
+  
   rma <- rma(affy)
   print("summarizing")
   #eset <- ProbeFilter(rma,gene)
@@ -198,7 +193,7 @@ CreateNet <- function(difexp){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSEPRUEBA")
+Aarray <- getaffy(GSE = "GSE4757")
 t <- rea
 gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
