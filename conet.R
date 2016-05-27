@@ -8,8 +8,10 @@ alzGSM <- read.table("Alzheimer_Chips.txt",stringsAsFactors = F)
 
 ############# FUNCION ###############
 
-meanProbe <- function(gene,array){
+medianProbe <- function(gene,array){
+  array <- rma
   marray <- as.data.frame(exprs(array))
+  names(marray) <- gsub(".CEL.gz","",names(marray),ignore.case = T)
   row.names(gene) <- gene$sym.ID
   pl <- gene[row.names(array),]
   names(pl) <- c("probe","gene")
@@ -87,7 +89,9 @@ getaffy <- function(GSE){
 ########## FUNCION ################
 
 difexprs <- function(affy,treatment,fdr){
-  #gene <- GeneSymbol(GPL)
+  #gene <- GeneSymbol(GPL
+  affy <- Aarray
+  treatment <- c(1,1,0,0)
   rma <- rma(affy)
   print("summarizing")
   #eset <- ProbeFilter(rma,gene)
