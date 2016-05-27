@@ -12,15 +12,12 @@ medianProbe <- function(gene,array){
   array <- rma
   marray <- as.data.frame(exprs(array))
   names(marray) <- gsub(".CEL.gz","",names(marray),ignore.case = T)
-  row.names(gene) <- gene$sym.ID
-  pl <- gene[row.names(array),]
-  names(pl) <- c("probe","gene")
-  cl <- cbind(pl,marray)
-  fl <- cl[grep(paste0("^","$"),cl$gene,invert = T),]
-  fl <- na.omit(fl)
+  uni <- data.frame(gene$gene,marray)
+  wowithw <- uni[grep(paste0("^","$"),uni$gene.gene,ignore.case = T,invert = T),]
+  
   g <- data.frame()
   
-  for(i in unique(fl$gene)){
+  for(i in unique(na.omit(wowithw$gene.gene))){
     e <- fl[grep(paste0("^",i,"$"),fl$gene),]
     f <- sapply(e[,3:dim(e)[2]],median)
     
@@ -47,6 +44,7 @@ GeneSymbol <- function(GPL, d = "."){
   sym <- Table(gpl)
   # Crea un data.frame con las sondas asociadas al gen al que corresponden
   ta <- data.frame(sym$ID, gsub(" /// ","-",sym$`Gene Symbol`), stringsAsFactors = F)
+  names(ta) <- c("probe","gene")
   return(ta)
 }
 
