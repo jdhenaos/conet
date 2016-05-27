@@ -37,13 +37,14 @@ meanProbe <- function(gene,array){
 
 GeneSymbol <- function(GPL, d = "."){
   # Va al directorio donde esta el archivo GPL
+  GPL = "GPL570"
   setwd(d)
   # Extrae la informacion del archivo .soft
   gpl <- getGEO(filename = paste0(GPL,".soft"))
   # Crea una tabla con todos los datos en el GPL
   sym <- Table(gpl)
   # Crea un data.frame con las sondas asociadas al gen al que corresponden
-  ta <- data.frame(sym$ID, sym$`Gene Symbol`, stringsAsFactors = F)
+  ta <- data.frame(sym$ID, gsub(" /// ","-",sym$`Gene Symbol`), stringsAsFactors = F)
   return(ta)
 }
 
@@ -72,10 +73,10 @@ GetInfo <- function(GSE,GPL,dir="."){
 ############# FUNCION ##############
 
 getaffy <- function(GSE){
+  GSE <- "GSEPRUEBA"
   raw <- read.table(file = paste0(GSE,"/","filelist.txt"),sep = "\t",
-                    header = T,comment.char = "#",stringsAsFactors = F)
-  GSMs <- raw[,2]
-  GSMs <- GSMs[grep(".CEL",GSMs,ignore.case = T)]
+                    header = T,comment.char = "", stringsAsFactors = F)
+  GSMs <- raw$Name[grep(".CEL",raw$Name,ignore.case = T)]
   affy <- ReadAffy(filenames = as.character(GSMs), compress = T,
                    celfile.path = GSE)
   return(affy)
@@ -195,7 +196,7 @@ CreateNet <- function(difexp){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSETOTAL")
+Aarray <- getaffy(GSE = "GSEPRUEBA")
 t <- rea
 gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
