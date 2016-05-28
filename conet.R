@@ -92,14 +92,9 @@ difexprs <- function(affy,treatment,fdr){
   #matrix <- as.matrix(eset)
   print("Differential analysis")
   
-  count <- 1
-  
-  while (count>=100) {
-    sam <- sam(eset,treatment)
-  }
-  
-  tab <- show(sam)
-  
+  samr <- sam(data = eset,cl = treatment,B=100,rand=100)
+  tab <- show(samr)
+
   mtab <- as.matrix(data.frame(tab$Delta,tab$FDR))
   filt <- mtab[mtab[,2]<=fdr,]
   delta <- as.numeric(filt[1,1])
