@@ -5,7 +5,10 @@ library(vsn)
 library(igraph)
 
 alzGSM <- read.table("Alzheimer_Chips.txt",stringsAsFactors = F)
-
+prkGSM <- read.table("Parkinson_Chips.txt",stringsAsFactors = F)
+GetInfo(prkGSM,"GPL570")
+scmGSM <- read.table("MultipleSclerosis_Chips.txt",stringsAsFactors = F)
+GetInfo(scmGSM,"GPL570")
 ############# FUNCION ###############
 
 medianProbe <- function(gene,array){
@@ -18,8 +21,8 @@ medianProbe <- function(gene,array){
   
   for(i in unique(na.omit(wowithw$gene.gene))){
     
-    a <- as.data.frame(t(sapply(wowithw[wowithw$gene.gene == i,2:ncol(wowithw)],median))
-                  ,row.names = i)
+    a <- as.data.frame(t(sapply(wowithw[grep(paste0("^",i,"$"),wowithw$gene.gene),
+                                        2:ncol(wowithw)],median)),row.names = i)
     g <- rbind.data.frame(g,a)
   }
   return(g)
@@ -50,9 +53,7 @@ GetInfo <- function(GSE,GPL,dir="."){
   
   setwd(dir)
   
-  for(i in GSE){
-    getGEOSuppFiles(i)
-  }
+  sapply(as.vector(t(GSE)), getGEOSuppFiles)
   
   files <- dir(".")[grep("^GSE[0-9]",dir("."),ignore.case = T)]
   
@@ -80,11 +81,9 @@ getaffy <- function(GSE){
 ########## FUNCION ################
 
 difexprs <- function(affy,treatment,fdr){
-  #gene <- GeneSymbol(GPL
-  affy <- Aarray
-  treatment <- rep(c(0,1),10)
-  fdr = 0.2
   
+  affy <- Aarray
+  #gene <- GeneSymbol(GPL
   rma <- rma(affy)
   print("summarizing")
   #eset <- ProbeFilter(rma,gene)
@@ -98,8 +97,8 @@ difexprs <- function(affy,treatment,fdr){
   mtab <- as.matrix(data.frame(tab$Delta,tab$FDR))
   filt <- mtab[mtab[,2]<=fdr,]
   delta <- as.numeric(filt[1,1])
-  plot(sam,delta)
-  sum <- summary(sam,delta,entrez=F)
+  plot(samr,delta)
+  sum <- summary(samr,delta,entrez=F)
   dife <- sum@row.sig.genes
   genes <- eset[dife,]
   return(genes)
@@ -121,6 +120,7 @@ CreateNet <- function(difexp){
   count <- 1
   
   for (val in pcv) {
+    
     ady <- matrix(0,ncol = ncol(simil), nrow = nrow(simil))
     
     for(i in 1:nrow(simil)){
@@ -128,6 +128,7 @@ CreateNet <- function(difexp){
       ady[which(simil[,i]<val),i]<-0
     }
     
+    diag(ady)<-0
     G = graph.adjacency(ady,mode="undirected",diag=FALSE)
     
     Ci <- transitivity(G,type = "globalundirected")
@@ -158,7 +159,7 @@ CreateNet <- function(difexp){
   
   C <- na.omit(C)
   
-  fit <-1
+  fit <-0.05
   
   for (z in as.vector(C)) {
     ad <- matrix(0,ncol = nrow(simil),nrow = nrow(simil))
@@ -171,9 +172,12 @@ CreateNet <- function(difexp){
     diag(ad)<-0
     gr=graph.adjacency(ad,mode="undirected",diag=FALSE)
     
-    pvalue <- fit_power_law(degree(gr)) 
+    pvalue <- fit_power_law(degree(gr))
     
-    if(pvalue$KS.p <= fit ){
+    print(paste("PCC:",z))
+    print(paste("p-value:",pvalue$KS.p))
+    
+    if(pvalue$KS.p >= fit ){
       fit <- pvalue$KS.p
       value <- z                     
     }
@@ -189,15 +193,23 @@ CreateNet <- function(difexp){
   colnames(Ad)<-rownames(Ad)<-rownames(simil)
   diag(Ad)<-0
   Gr=graph.adjacency(Ad,mode="undirected",add.colnames=NULL,diag=FALSE)
+  
+  print("")
+  print("Final Network")
+  print("")
   print(paste("p-value =",fit,sep = " "))
+  print(paste("threshold =",value,sep = " "))
+  
   return(Gr) 
 }
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSE4757")
-t <- rea
+Aarray <- getaffy(GSE = "GSE16759")
+t <- c(1,1,1,1,0,0,0,0)
 gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
+write.table(row.names(Adife),file = "GSE16759GeneList.txt",quote = F)
 Anet <- CreateNet(difexp = Adife)
-write.graph(Anet,file = "ALZNET.txt",format = "ncol")
+write.graph(Anet,file = "GSE16759.txt",format = "ncol")
+                                                                                                                                          
