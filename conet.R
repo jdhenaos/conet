@@ -3,6 +3,7 @@ library(siggenes)
 library(GEOquery)
 library(vsn)
 library(igraph)
+library(acde)
 
 alzGSM <- read.table("Alzheimer_Chips.txt",stringsAsFactors = F)
 prkGSM <- read.table("Parkinson_Chips.txt",stringsAsFactors = F)
@@ -90,7 +91,7 @@ difexprs <- function(affy,treatment,fdr){
     #eset <- ProbeFilter(rma,gene)
     eset <- medianProbe(gene,vsn)
     #matrix <- as.matrix(eset)
-  }else id(method == "rma"){
+  }else if(method == "rma"){
     rma <- rma(affy) 
     print("summarizing")
     #eset <- ProbeFilter(rma,gene)
@@ -214,10 +215,13 @@ CreateNet <- function(difexp){
 ##################################################
 
 Aarray <- getaffy(GSE = "GSE16759")
-t <- c(1,1,1,1,0,0,0,0)
+t <- c(1,1,1,1,2,2,2,2)
 gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.01)
 write.table(row.names(Adife),file = "GSE66333GeneList.txt",quote = F)
 Anet <- CreateNet(difexp = Adife)
 write.graph(Anet,file = "GSE66333.txt",format = "ncol")
+
+new <- stp(eset,t,th = 0.2)
+plot(new)
                                                                                                                                           
