@@ -85,18 +85,16 @@ difexprs <- function(affy,treatment,fdr){
   fdr <- 0.2
   
   if(method == "vsn"){
-    vsn <- vsn <- expresso(affy,pmcorrect.method = "pmonly", bg.correct = F,
+    vsn <- expresso(affy,pmcorrect.method = "pmonly", bg.correct = F,
                            normalize.method = "vsn", summary.method = "avgdiff")
     print("summarizing")
     #eset <- ProbeFilter(rma,gene)
     eset <- medianProbe(gene,vsn)
-    #matrix <- as.matrix(eset)
   }else if(method == "rma"){
     rma <- rma(affy) 
     print("summarizing")
     #eset <- ProbeFilter(rma,gene)
     eset <- medianProbe(gene,rma)
-    #matrix <- as.matrix(eset)
   }
   print("Differential analysis")
   
@@ -214,7 +212,7 @@ CreateNet <- function(difexp){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSE16759")
+Aarray <- getaffy(GSE = "GSE66333")
 t <- c(1,1,1,1,2,2,2,2)
 gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.01)
@@ -222,6 +220,6 @@ write.table(row.names(Adife),file = "GSE66333GeneList.txt",quote = F)
 Anet <- CreateNet(difexp = Adife)
 write.graph(Anet,file = "GSE66333.txt",format = "ncol")
 
-new <- stp(eset,t,R = 100, PER = T,th = 0.2)
+new <- stp(eset,t,R = 100, PER = T,alpha = 0.2)
 plot(new)
                                                                                                                                           
