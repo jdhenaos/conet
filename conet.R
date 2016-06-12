@@ -84,17 +84,23 @@ difexprs <- function(affy,treatment,fdr){
   treatment <- t
   fdr <- 0.2
   
-  if(method == "vsn"){
+  if(NormalizeMethod == "vsn"){
     vsn <- expresso(affy,pmcorrect.method = "pmonly", bg.correct = F,
                            normalize.method = "vsn", summary.method = "avgdiff")
     print("summarizing")
-    #eset <- ProbeFilter(rma,gene)
-    eset <- medianProbe(gene,vsn)
-  }else if(method == "rma"){
+    if(SummaryMethod == "Max"){
+      eset <- ProbeFilter(vsn,gene) 
+    }else if(SummaryMethod == "Median"){
+      eset <- medianProbe(gene,vsn)
+    }
+  }else if(NormalizeMethod == "rma"){
     rma <- rma(affy) 
     print("summarizing")
-    #eset <- ProbeFilter(rma,gene)
-    eset <- medianProbe(gene,rma)
+    if(SummaryMethod == "Max"){
+      eset <- ProbeFilter(rma,gene) 
+    }else if(SummaryMethod == "Median"){
+      eset <- medianProbe(gene,rma)
+    }
   }
   print("Differential analysis")
   
