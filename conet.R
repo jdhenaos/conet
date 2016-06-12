@@ -80,10 +80,6 @@ difexprs <- function(affy,treatment,fdr){
     return(g)
   }
   
-  affy <- Aarray
-  treatment <- t
-  fdr <- 0.2
-  
   if(NormalizeMethod == "vsn"){
     vsn <- expresso(affy,pmcorrect.method = "pmonly", bg.correct = F,
                            normalize.method = "vsn", summary.method = "avgdiff")
@@ -104,16 +100,26 @@ difexprs <- function(affy,treatment,fdr){
   }
   print("Differential analysis")
   
-  samr <- sam(data = eset,cl = treatment,B=100,rand=100)
-  tab <- show(samr)
-
-  mtab <- as.matrix(data.frame(tab$Delta,tab$FDR))
-  filt <- mtab[mtab[,2]<=fdr,]
-  delta <- as.numeric(filt[1,1])
-  plot(samr,delta)
-  sum <- summary(samr,delta,entrez=F)
-  dife <- sum@row.sig.genes
-  genes <- eset[dife,]
+  if(DifferentialMethod == "sam"){
+    samr <- sam(data = eset,cl = treatment,B=100,rand=100)
+    tab <- show(samr)
+    
+    mtab <- as.matrix(data.frame(tab$Delta,tab$FDR))
+    filt <- mtab[mtab[,2]<=fdr,]
+    delta <- as.numeric(filt[1,1])
+    plot(samr,delta)
+    sum <- summary(samr,delta,entrez=F)
+    dife <- sum@row.sig.genes
+    genes <- eset[dife,] 
+  }else if(DifferentialMethod == "acde"){
+    acde <- stp(eset,t,R = 100, PER = T,alpha = 0.2)
+    plot(new)
+    print(paste0("Achieved FDR: ",new$astar))
+    
+    list <- data.frame(acde$gNames, acde$dgenes)
+    diff <- list[list$acde.dgenes != "no-diff.",]
+    genes <- eset[diff$acde.gNames,]
+  }
   return(genes)
 }
 
@@ -225,7 +231,4 @@ Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.01)
 write.table(row.names(Adife),file = "GSE66333GeneList.txt",quote = F)
 Anet <- CreateNet(difexp = Adife)
 write.graph(Anet,file = "GSE66333.txt",format = "ncol")
-
-new <- stp(eset,t,R = 100, PER = T,alpha = 0.2)
-plot(new)
                                                                                                                                           
