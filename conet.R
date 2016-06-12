@@ -222,6 +222,6 @@ write.table(row.names(Adife),file = "GSE66333GeneList.txt",quote = F)
 Anet <- CreateNet(difexp = Adife)
 write.graph(Anet,file = "GSE66333.txt",format = "ncol")
 
-new <- stp(eset,t,th = 0.2)
+new <- stp(eset,t,R = 100, PER = T)
 plot(new)
                                                                                                                                           
