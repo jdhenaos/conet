@@ -9,26 +9,6 @@ prkGSM <- read.table("Parkinson_Chips.txt",stringsAsFactors = F)
 GetInfo(prkGSM,"GPL570")
 scmGSM <- read.table("MultipleSclerosis_Chips.txt",stringsAsFactors = F)
 GetInfo(scmGSM,"GPL570")
-############# FUNCION ###############
-
-medianProbe <- function(gene,array){
-  marray <- as.data.frame(exprs(array))
-  names(marray) <- gsub(".CEL.gz","",names(marray),ignore.case = T)
-  uni <- data.frame(gene$gene,marray)
-  wowithw <- uni[grep(paste0("^","$"),uni$gene.gene,ignore.case = T,invert = T),]
-  
-  g <- data.frame()
-  
-  for(i in unique(na.omit(wowithw$gene.gene))){
-    
-    a <- as.data.frame(t(sapply(wowithw[grep(paste0("^",i,"$"),wowithw$gene.gene),
-                                        2:ncol(wowithw)],median)),row.names = i)
-    g <- rbind.data.frame(g,a)
-  }
-  return(g)
-}
-
-####################################
 
 ############# FUNCION ##############
 
@@ -45,7 +25,7 @@ GeneSymbol <- function(GPL, d = "."){
   return(ta)
 }
 
-#####################################
+####################################
 
 ############# FUNCION ##############
 
@@ -82,13 +62,41 @@ getaffy <- function(GSE){
 
 difexprs <- function(affy,treatment,fdr){
   
+  medianProbe <- function(gene,array){
+    marray <- as.data.frame(exprs(array))
+    names(marray) <- gsub(".CEL.gz","",names(marray),ignore.case = T)
+    uni <- data.frame(gene$gene,marray)
+    wowithw <- uni[grep(paste0("^","$"),uni$gene.gene,ignore.case = T,invert = T),]
+    
+    g <- data.frame()
+    
+    for(i in unique(na.omit(wowithw$gene.gene))){
+      
+      a <- as.data.frame(t(sapply(wowithw[grep(paste0("^",i,"$"),wowithw$gene.gene),
+                                          2:ncol(wowithw)],median)),row.names = i)
+      g <- rbind.data.frame(g,a)
+    }
+    return(g)
+  }
+  
   affy <- Aarray
-  #gene <- GeneSymbol(GPL
-  rma <- rma(affy)
-  print("summarizing")
-  #eset <- ProbeFilter(rma,gene)
-  eset <- medianProbe(gene,rma)
-  #matrix <- as.matrix(eset)
+  treatment <- t
+  fdr <- 0.2
+  
+  if(method == "vsn"){
+    vsn <- vsn <- expresso(affy,pmcorrect.method = "pmonly", bg.correct = F,
+                           normalize.method = "vsn", summary.method = "avgdiff")
+    print("summarizing")
+    #eset <- ProbeFilter(rma,gene)
+    eset <- medianProbe(gene,vsn)
+    #matrix <- as.matrix(eset)
+  }else id(method == "rma"){
+    rma <- rma(affy) 
+    print("summarizing")
+    #eset <- ProbeFilter(rma,gene)
+    eset <- medianProbe(gene,rma)
+    #matrix <- as.matrix(eset)
+  }
   print("Differential analysis")
   
   samr <- sam(data = eset,cl = treatment,B=100,rand=100)
@@ -208,8 +216,8 @@ CreateNet <- function(difexp){
 Aarray <- getaffy(GSE = "GSE16759")
 t <- c(1,1,1,1,0,0,0,0)
 gene <- GeneSymbol("GPL570")
-Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2)
-write.table(row.names(Adife),file = "GSE16759GeneList.txt",quote = F)
+Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.01)
+write.table(row.names(Adife),file = "GSE66333GeneList.txt",quote = F)
 Anet <- CreateNet(difexp = Adife)
-write.graph(Anet,file = "GSE16759.txt",format = "ncol")
+write.graph(Anet,file = "GSE66333.txt",format = "ncol")
                                                                                                                                           
