@@ -150,17 +150,16 @@ difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,Differenti
   
   if(DifferentialMethod == "sam"){
     samr <- sam(data = eset,cl = treatment,B=100,rand=100)
-    tab <- show(samr)
-    
-    mtab <- as.matrix(data.frame(tab$Delta,tab$FDR))
-    filt <- mtab[mtab[,2]<=fdr,]
-    delta <- as.numeric(filt[1,1])
-    plot(samr,delta)
-    sum <- summary(samr,delta,entrez=F)
+    tab <- as.data.frame(samr@mat.fdr)
+    tab <- tab[tab$FDR >= fdr,]
+    value <- tab[nrow(tab),]
+    plot(samr,value$Delta)
+    sum <- summary(samr,value$Delta,entrez=F)
     dife <- sum@row.sig.genes
-    genes <- eset[dife,] 
+    genes <- eset[dife,]
+    print(paste0("Achieved FDR: ",value$FDR))
   }else if(DifferentialMethod == "acde"){
-    acde <- stp(eset,t,R = 100, PER = T,alpha = 0.2)
+    acde <- stp(eset,t,R = 100, PER = T,alpha = fdr)
     plot(new)
     print(paste0("Achieved FDR: ",new$astar))
     
