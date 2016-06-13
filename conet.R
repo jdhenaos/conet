@@ -80,6 +80,54 @@ difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,Differenti
     return(g)
   }
   
+  ProbeFilter <- function(array,gpl){
+    # Extrae los datos de la clase eset o Affybatch
+    eset <- exprs(array)
+    # Obtiene el promedio de los valores normalizados
+    rows <- rowMeans(eset,na.rm = T)
+    # Crea un data.frame con el nombre de la sonda, el gen al que corresponde y un valor 0
+    # que sera reemplazado posteriormente.
+    da <- data.frame(gene,stringsAsFactors = F)
+    # cambio de nombres del data.frame
+    names(da) <- c("a","b")
+    # crea un data.frame con el nombre de la sonda asociado con su valor promedio.
+    probemean <- data.frame(names(rows),rows, stringsAsFactors = F)
+    # cambio de nombres del data.frame
+    names(probemean) <- c("a","b")
+    # Union de los dos data.frames anteriormente creados a partir de los nombres de las sondas
+    merge <- merge.data.frame(probemean, da, by.x = "a", by.y = "a")
+    # crea un data.frame organizado y listo para ser filtrado.
+    dat <- data.frame(merge$b.y,merge$b.x, row.names = merge$a,stringsAsFactors = F)
+    # Elimina los datos que no estan asociados a ningun gen
+    total <- dat[-c(grep(paste0("^","$"),dat[,1])),]
+    # Crea una lista de genes unicos
+    onlygenes <- unique(total[,1])
+    # Crea un data.frame vacio que sera llenado con los datos finales
+    result <- data.frame()
+    
+    # Filtrado de genes.
+    for(x in onlygenes){
+      # Busca todos los datos asociados a un gen
+      genes  <- total[grep(x,total[,1],fixed = T),]
+      # Toma el valor maximo.
+      max <- genes[grep(max(total[grep(paste0("^",x,"$"),total[,1]),2]),genes[,2]),]
+      # Llenado del data.frame vacio
+      if(length(result) == 0){
+        result <- rbind(max)
+      }else{
+        result <- rbind(result,max)
+      }
+    }
+    # convirtiendo datos normalizados de matrix a data.frame
+    eset2 <- as.data.frame(eset)
+    # Obteniendo los datos finales
+    final <- eset2[row.names(result),]
+    # Reemplazando los nombres de sondas por genes
+    row.names(final) <- result$merge.b.y
+    
+    return(final)
+  }
+  
   if(NormalizeMethod == "vsn"){
     vsn <- expresso(affy,pmcorrect.method = "pmonly", bg.correct = F,
                            normalize.method = "vsn", summary.method = "avgdiff")
