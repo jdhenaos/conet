@@ -151,7 +151,8 @@ difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,Differenti
   if(DifferentialMethod == "sam"){
     samr <- sam(data = eset,cl = treatment,B=100,rand=100)
     tab <- as.data.frame(samr@mat.fdr)
-    tab <- tab[tab$FDR >= fdr,]
+    tab <- tab[tab$FDR >= 5,]
+    if(nrow(tab) == 0){stop("No differentially expressed genes found")}
     value <- tab[nrow(tab),]
     plot(samr,value$Delta)
     sum <- summary(samr,value$Delta,entrez=F)
