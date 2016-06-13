@@ -61,7 +61,7 @@ getaffy <- function(GSE){
 
 ########## FUNCION ################
 
-difexprs <- function(affy,treatment,fdr){
+difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,DifferentialMethod){
   
   medianProbe <- function(gene,array){
     marray <- as.data.frame(exprs(array))
@@ -224,11 +224,13 @@ CreateNet <- function(difexp){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSE66333")
-t <- c(1,1,1,1,2,2,2,2)
+Aarray <- getaffy(GSE = "GSE4757")
+t <- c(rep(0,6),rep(1,12))
+t <- rep(c(0,1),10)
 gene <- GeneSymbol("GPL570")
-Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.01)
-write.table(row.names(Adife),file = "GSE66333GeneList.txt",quote = F)
+Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2,NormalizeMethod = "vsn",
+                  SummaryMethod = "Median",DifferentialMethod = "sam")
+write.table(row.names(Adife),file = "GSE4757GeneList_vms.txt",quote = F)
 Anet <- CreateNet(difexp = Adife)
-write.graph(Anet,file = "GSE66333.txt",format = "ncol")
+write.graph(Anet,file = "GSE4757_vms.txt",format = "ncol")
                                                                                                                                           
