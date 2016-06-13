@@ -151,7 +151,7 @@ difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,Differenti
   if(DifferentialMethod == "sam"){
     samr <- sam(data = eset,cl = treatment,B=100,rand=100)
     tab <- as.data.frame(samr@mat.fdr)
-    tab <- tab[tab$FDR >= 5,]
+    tab <- tab[tab$FDR >= fdr,]
     if(nrow(tab) == 0){stop("No differentially expressed genes found")}
     value <- tab[nrow(tab),]
     plot(samr,value$Delta)
@@ -161,9 +161,9 @@ difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,Differenti
     print(paste0("Achieved FDR: ",value$FDR))
   }else if(DifferentialMethod == "acde"){
     acde <- stp(eset,t,R = 100, PER = T,alpha = fdr)
-    plot(new)
-    print(paste0("Achieved FDR: ",new$astar))
-    
+    plot(acde)
+    print(paste0("Achieved FDR: ",acde$astar))
+    print(paste0("delta value: "),acde$th)
     list <- data.frame(acde$gNames, acde$dgenes)
     diff <- list[list$acde.dgenes != "no-diff.",]
     genes <- eset[diff$acde.gNames,]
@@ -272,13 +272,10 @@ CreateNet <- function(difexp){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSE4757")
-t <- c(rep(0,6),rep(1,12))
-t <- rep(c(0,1),10)
+Aarray <- getaffy(GSE = "ALZTOTAL")
+#t <- c(rep(1,4),rep(0,4))
+t <- as.vector(t(read.table("ALZTOTAL/treatment.txt",stringsAsFactors = F)))
 gene <- GeneSymbol("GPL570")
-Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.2,NormalizeMethod = "vsn",
+Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "vsn",
                   SummaryMethod = "Median",DifferentialMethod = "sam")
-write.table(row.names(Adife),file = "GSE4757GeneList_vms.txt",quote = F)
-Anet <- CreateNet(difexp = Adife)
-write.graph(Anet,file = "GSE4757_vms.txt",format = "ncol")
-                                                                                                                                          
+write.table(row.names(Adife),file = "ALZTOTALGeneList_vms.txt",quote = F)
