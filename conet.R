@@ -163,7 +163,7 @@ difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,Differenti
     acde <- stp(eset,t,R = 100, PER = T,alpha = fdr)
     plot(acde)
     print(paste0("Achieved FDR: ",acde$astar))
-    print(paste0("delta value: "),acde$th)
+    print(paste0("delta value: ",acde$th))
     list <- data.frame(acde$gNames, acde$dgenes)
     diff <- list[list$acde.dgenes != "no-diff.",]
     genes <- eset[diff$acde.gNames,]
@@ -272,10 +272,9 @@ CreateNet <- function(difexp){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "ALZTOTAL")
-#t <- c(rep(1,4),rep(0,4))
-t <- as.vector(t(read.table("ALZTOTAL/treatment.txt",stringsAsFactors = F)))
+Aarray <- getaffy(GSE = "GSE20141")
+t <- c(rep(2,8),rep(1,10))
 gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "vsn",
-                  SummaryMethod = "Median",DifferentialMethod = "sam")
-write.table(row.names(Adife),file = "ALZTOTALGeneList_vms.txt",quote = F)
+                  SummaryMethod = "Median",DifferentialMethod = "acde")
+write.table(row.names(Adife),file = "GSE20141GeneList_vma.txt",quote = F)
