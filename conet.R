@@ -272,9 +272,9 @@ CreateNet <- function(difexp){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSE14711")
-t <- c(rep(2,3),rep(1,8))
+Aarray <- getaffy(GSE = "GSE9807")
+t <- c(rep(2,3),rep(1,3))
+t <- c(2,2,rep(c(2,2,2,1,1,1),3))
 gene <- GeneSymbol("GPL570")
-Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "vsn",
+Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "rma",
                   SummaryMethod = "Median",DifferentialMethod = "acde")
-write.table(row.names(Adife),file = "GSE14711GeneList_vma.txt",quote = F)
