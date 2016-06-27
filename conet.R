@@ -175,9 +175,16 @@ difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,Differenti
 
 ####### FUNCION #############
 
-CreateNet <- function(difexp){
+CreateNet <- function(difexp, method){
   
-  simil <- abs(cor(t(difexp),use =  "pairwise.complete.obs"))
+  if(method == "corelation"){
+    simil <- abs(cor(t(difexp),use =  "pairwise.complete.obs"))
+  }else if(method == "mutual information"){
+    presimil <- build.mim(t(difexp))
+    simil<-sqrt(1-exp(-2*presimil))
+    simil[which(is.na(simil))]<-0
+  }
+  
   
   pcv <- seq(0.01,0.99,by = 0.01)
   
