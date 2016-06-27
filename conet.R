@@ -4,6 +4,7 @@ library(GEOquery)
 library(vsn)
 library(igraph)
 library(acde)
+library(minet)
 
 alzGSM <- read.table("Alzheimer_Chips.txt",stringsAsFactors = F)
 prkGSM <- read.table("Parkinson_Chips.txt",stringsAsFactors = F)
@@ -279,9 +280,10 @@ CreateNet <- function(difexp, method){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSE9807")
-t <- c(rep(2,3),rep(1,3))
-t <- c(2,2,rep(c(2,2,2,1,1,1),3))
+Aarray <- getaffy(GSE = "GSE66333")
+t <- c(rep(1,4),rep(0,4))
 gene <- GeneSymbol("GPL570")
 Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "rma",
-                  SummaryMethod = "Median",DifferentialMethod = "acde")
+                  SummaryMethod = "Median",DifferentialMethod = "sam")
+net1 <- CreateNet(difexp = Adife,method = "corelation")
+net2 <- CreateNet(difexp = Adife,method = "mutual information")
