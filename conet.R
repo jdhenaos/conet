@@ -161,7 +161,8 @@ difexprs <- function(affy,treatment,fdr,NormalizeMethod,SummaryMethod,Differenti
     genes <- eset[dife,]
     print(paste0("Achieved FDR: ",value$FDR))
   }else if(DifferentialMethod == "acde"){
-    acde <- stp(eset,t,R = 100, PER = T,alpha = fdr)
+    treatment[treatment == 0] <- 2
+    acde <- stp(eset,treatment,R = 100, PER = T,alpha = fdr)
     plot(acde)
     print(paste0("Achieved FDR: ",acde$astar))
     print(paste0("delta value: ",acde$tstar))
@@ -222,6 +223,8 @@ CreateNet <- function(difexp, method){
     Cis[count] <- Ci
     C0s[count] <- C0
     count <- count + 1
+    
+    print(paste0(val,"%"))
   }
   
   C <- vector()
@@ -280,10 +283,16 @@ CreateNet <- function(difexp, method){
 
 ##################################################
 
-Aarray <- getaffy(GSE = "GSE66333")
-t <- c(rep(1,4),rep(0,4))
+Aarray <- getaffy(GSE = "PRKTOTAL")
+t <- as.vector(t(read.table("PRKTOTAL/treatment.txt")))
 gene <- GeneSymbol("GPL570")
-Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "rma",
+Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "vsn",
                   SummaryMethod = "Median",DifferentialMethod = "sam")
+
+write.table(Adife,"PRKMATRIX.txt",quote = F)
+
 net1 <- CreateNet(difexp = Adife,method = "corelation")
 net2 <- CreateNet(difexp = Adife,method = "mutual information")
+
+write.graph(net1,"PRKcorelation.net",format = "ncol")
+write.graph(net2,"PRKmutual_information.net",format = "ncol")
