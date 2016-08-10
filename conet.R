@@ -182,7 +182,7 @@ CreateNet <- function(difexp, method){
   if(method == "corelation"){
     simil <- abs(cor(t(difexp),use =  "pairwise.complete.obs"))
   }else if(method == "mutual information"){
-    presimil <- build.mim(t(difexp))
+    presimil <- build.mim(t(difexp), estimator = "mi.shrink", disc = "globalequalwidth")
     simil<-sqrt(1-exp(-2*presimil))
     simil[which(is.na(simil))]<-0
   }
@@ -291,8 +291,11 @@ Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "vsn"
 
 write.table(Adife,"PRKMATRIX.txt",quote = F)
 
+
+Adife <- read.table("GSE5281MATRIX.txt",header = T)
+
 net1 <- CreateNet(difexp = Adife,method = "corelation")
 net2 <- CreateNet(difexp = Adife,method = "mutual information")
 
-write.graph(net1,"PRKcorelation.net",format = "ncol")
-write.graph(net2,"PRKmutual_information.net",format = "ncol")
+write.graph(net1,"GSE5281corelation.net",format = "ncol")
+write.graph(net2,"GSE5281mutual_information.net",format = "ncol")
