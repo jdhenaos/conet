@@ -304,38 +304,40 @@ write.graph(net2,"GSE13732mutual_information.net",format = "ncol")
 ################ BOXPLOT ########################
 ##############################################
 
-
-
-medianProbe <- function(gene,array){
-  marray <- as.data.frame(exprs(array))
-  names(marray) <- gsub(".CEL.gz","",names(marray),ignore.case = T)
-  uni <- data.frame(gene$gene,marray)
-  wowithw <- uni[grep(paste0("^","$"),uni$gene.gene,ignore.case = T,invert = T),]
-  
-  g <- data.frame()
-  
-  for(i in unique(na.omit(wowithw$gene.gene))){
+function(genes,study,type){
+  medianProbe <- function(gene,array){
+    marray <- as.data.frame(exprs(array))
+    names(marray) <- gsub(".CEL.gz","",names(marray),ignore.case = T)
+    uni <- data.frame(gene$gene,marray)
+    wowithw <- uni[grep(paste0("^","$"),uni$gene.gene,ignore.case = T,invert = T),]
     
-    a <- as.data.frame(t(sapply(wowithw[grep(paste0("^",i,"$"),wowithw$gene.gene),
-                                        2:ncol(wowithw)],median)),row.names = i)
-    g <- rbind.data.frame(g,a)
+    g <- data.frame()
+    
+    for(i in unique(na.omit(wowithw$gene.gene))){
+      
+      a <- as.data.frame(t(sapply(wowithw[grep(paste0("^",i,"$"),wowithw$gene.gene),
+                                          2:ncol(wowithw)],median)),row.names = i)
+      g <- rbind.data.frame(g,a)
+    }
+    return(g)
   }
-  return(g)
+  
+  Aarray <- getaffy(GSE = study)
+  
+  vsn <- expresso(Aarray,pmcorrect.method = "pmonly", bg.correct = F,
+                  normalize.method = "vsn", summary.method = "avgdiff")
+  
+  data <- medianProbe(gene = genes, array = vsn)
+  
+  names(data) <- c(rep(1,4),rep(0,4))
+  
+  tdata <- data[names(data) == type]
+  
+  tdata$mean <- rowMeans(tdata, na.rm = T)
+  CV <- function(x){sd(x,na.rm = T)/mean(x,na.rm = T)}
+  tdata$cv <- apply(tdata[,1:4],1,CV)
+  
+  return(tdata)
 }
 
-genes <- GeneSymbol("GPL570")
 
-Aarray <- getaffy(GSE = "GSE16759")
-
-vsn <- expresso(Aarray,pmcorrect.method = "pmonly", bg.correct = F,
-                normalize.method = "vsn", summary.method = "avgdiff")
-
-data <- medianProbe(gene = genes, array = vsn)
-
-names(data) <- c(rep(1,4),rep(0,4))
-
-tdata <- data[names(data) == "1"]
-
-tdata$mean <- rowMeans(tdata, na.rm = T)
-CV <- function(x){sd(x,na.rm = T)/mean(x,na.rm = T)}
-tdata$cv <- apply(tdata[,1:4],1,CV)
