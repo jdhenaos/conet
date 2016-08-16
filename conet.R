@@ -292,10 +292,29 @@ Adife <- difexprs(affy = Aarray,treatment = t,fdr = 0.05,NormalizeMethod = "vsn"
 write.table(Adife,"PRKMATRIX.txt",quote = F)
 
 
-Adife <- read.table("GSE5281MATRIX.txt",header = T)
+Adife <- read.table("GSE13732MATRIX.txt",header = T)
 
 net1 <- CreateNet(difexp = Adife,method = "corelation")
 net2 <- CreateNet(difexp = Adife,method = "mutual information")
 
-write.graph(net1,"GSE5281corelation.net",format = "ncol")
-write.graph(net2,"GSE5281mutual_information.net",format = "ncol")
+write.graph(net1,"GSE13732corelation.net",format = "ncol")
+write.graph(net2,"GSE13732mutual_information.net",format = "ncol")
+
+###################################################
+################ BOXPLOT ########################
+##############################################
+
+Aarray <- getaffy(GSE = "GSE16759")
+
+vsn <- expresso(Aarray,pmcorrect.method = "pmonly", bg.correct = F,
+                normalize.method = "vsn", summary.method = "avgdiff")
+
+data <- as.data.frame(exprs(vsn))
+
+names(data) <- c(rep(1,4),rep(0,4))
+
+tdata <- data[names(data) == "1"]
+
+tdata$mean <- rowMeans(case, na.rm = T)
+CV <- function(x){sd(x,na.rm = T)/mean(x,na.rm = T)}
+tdata$cv <- apply(tdata[,1:4],1,CV)
