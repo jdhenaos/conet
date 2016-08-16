@@ -304,7 +304,7 @@ write.graph(net2,"GSE13732mutual_information.net",format = "ncol")
 ################ BOXPLOT ########################
 ##############################################
 
-cof.var <- function(genes,study,type,treatment, complete == FALSE){
+cof.var <- function(genes,study,type,treatment, complete = FALSE){
   medianProbe <- function(gene,array){
     marray <- as.data.frame(exprs(array))
     names(marray) <- gsub(".CEL.gz","",names(marray),ignore.case = T)
@@ -334,7 +334,7 @@ cof.var <- function(genes,study,type,treatment, complete == FALSE){
   if(complete == FALSE){
     tdata <- data[names(data) == type]
   }else{
-    tdata == data
+    tdata = data
   }
   
   
@@ -348,6 +348,13 @@ cof.var <- function(genes,study,type,treatment, complete == FALSE){
 gpl <- GeneSymbol(GPL = "GPL570")
 t <- c(rep(1,4),rep(0,4))
 
-test <- cof.var(genes = gpl,study = "GSE16759",type = "1", treatment = t)
+test <- cof.var(genes = gpl,study = "GSE16759", treatment = t, complete = T)
 
+GSE16759_T <- cof.var(genes = gpl,study = "GSE16759", treatment = t, type = "1")
+GSE16759_C <- cof.var(genes = gpl,study = "GSE16759", treatment = t, type = "0")
+GSE16759_X <- cof.var(genes = gpl,study = "GSE16759", treatment = t, complete = TRUE)
+
+GSE18309_T <- cof.var(genes = gpl,study = "GSE18309", treatment = t, type = "1")
+GSE18309_C <- cof.var(genes = gpl,study = "GSE18309", treatment = t, type = "0")
+GSE18309_X <- cof.var(genes = gpl,study = "GSE18309", treatment = t, complete = T)
 
