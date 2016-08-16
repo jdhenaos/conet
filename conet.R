@@ -304,7 +304,7 @@ write.graph(net2,"GSE13732mutual_information.net",format = "ncol")
 ################ BOXPLOT ########################
 ##############################################
 
-cof.var <- function(genes,study,type,treatment){
+cof.var <- function(genes,study,type,treatment, complete == FALSE){
   medianProbe <- function(gene,array){
     marray <- as.data.frame(exprs(array))
     names(marray) <- gsub(".CEL.gz","",names(marray),ignore.case = T)
@@ -331,7 +331,12 @@ cof.var <- function(genes,study,type,treatment){
   
   names(data) <- treatment
   
-  tdata <- data[names(data) == type]
+  if(complete == FALSE){
+    tdata <- data[names(data) == type]
+  }else{
+    tdata == data
+  }
+  
   
   tdata$mean <- rowMeans(tdata, na.rm = T)
   CV <- function(x){sd(x,na.rm = T)/mean(x,na.rm = T)}
