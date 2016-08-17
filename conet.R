@@ -340,7 +340,7 @@ cof.var <- function(genes,study,type,treatment, complete = FALSE){
   
   tdata$mean <- rowMeans(tdata, na.rm = T)
   CV <- function(x){sd(x,na.rm = T)/mean(x,na.rm = T)}
-  tdata$cv <- apply(tdata[,1:4],1,CV)
+  tdata$cv <- apply(tdata[,1:(ncol(tdata)-1)],1,CV)
   
   return(tdata)
 }
