@@ -410,3 +410,77 @@ t9 <- c(rep(1,4),rep(0,4))
 GSE66333_T <- cof.var(genes = gpl,study = "GSE66333", treatment = t9, type = "1")
 GSE66333_C <- cof.var(genes = gpl,study = "GSE66333", treatment = t9, type = "0")
 GSE66333_X <- cof.var(genes = gpl,study = "GSE66333", treatment = t9, complete = T)
+
+################################# Esclerosis ##########################################
+
+w <- c(rep(1,39),rep(0,30),rep(1,34),rep(0,10))
+
+GSE13732_T <- cof.var(genes = gpl,study = "GSE13732", treatment = w, type = "1")
+GSE13732_C <- cof.var(genes = gpl,study = "GSE13732", treatment = w, type = "0")
+GSE13732_X <- cof.var(genes = gpl,study = "GSE13732", treatment = w, complete = T)
+
+w1 <- c(rep(0,15),rep(1,15))
+
+GSE14386_T <- cof.var(genes = gpl,study = "GSE14386", treatment = w1, type = "1")
+GSE14386_C <- cof.var(genes = gpl,study = "GSE14386", treatment = w1, type = "0")
+GSE14386_X <- cof.var(genes = gpl,study = "GSE14386", treatment = w1, complete = T)
+
+w2 <- c(0,1,0,1,1,0,0,1,0,1,0,1,1,0,0,1)
+
+GSE16461_T <- cof.var(genes = gpl,study = "GSE16461", treatment = w2, type = "1")
+GSE16461_C <- cof.var(genes = gpl,study = "GSE16461", treatment = w2, type = "0")
+GSE16461_X <- cof.var(genes = gpl,study = "GSE16461", treatment = w2, complete = T)
+
+w3 <- c(rep(0,15),rep(1,14))
+
+GSE21942_T <- cof.var(genes = gpl,study = "GSE21942", treatment = w3, type = "1")
+GSE21942_C <- cof.var(genes = gpl,study = "GSE21942", treatment = w3, type = "0")
+GSE21942_X <- cof.var(genes = gpl,study = "GSE21942", treatment = w3, complete = T)
+
+w4 <- c(rep(0,4),rep(1,6))
+
+GSE23205_T <- cof.var(genes = gpl,study = "GSE23205", treatment = w4, type = "1")
+GSE23205_C <- cof.var(genes = gpl,study = "GSE23205", treatment = w4, type = "0")
+GSE23205_X <- cof.var(genes = gpl,study = "GSE23205", treatment = w4, complete = T)
+
+w5 <- c(rep(1,6),rep(0,4))
+
+GSE26484_T <- cof.var(genes = gpl,study = "GSE26484", treatment = w5, type = "1")
+GSE26484_C <- cof.var(genes = gpl,study = "GSE26484", treatment = w5, type = "0")
+GSE26484_X <- cof.var(genes = gpl,study = "GSE26484", treatment = w5, complete = T)
+
+w6 <- c(rep(0,8),rep(1,18))
+
+GSE37750_T <- cof.var(genes = gpl,study = "GSE37750", treatment = w6, type = "1")
+GSE37750_C <- cof.var(genes = gpl,study = "GSE37750", treatment = w6, type = "0")
+GSE37750_X <- cof.var(genes = gpl,study = "GSE37750", treatment = w6, complete = T)
+
+w7 <- c(0,0,rep(1,5))
+
+GSE38010_T <- cof.var(genes = gpl,study = "GSE38010", treatment = w7, type = "1")
+GSE38010_C <- cof.var(genes = gpl,study = "GSE38010", treatment = w7, type = "0")
+GSE38010_X <- cof.var(genes = gpl,study = "GSE38010", treatment = w7, complete = T)
+
+w8 <- c(rep(0,10),rep(1,10))
+
+GSE43591_T <- cof.var(genes = gpl,study = "GSE43591", treatment = w8, type = "1")
+GSE43591_C <- cof.var(genes = gpl,study = "GSE43591", treatment = w8, type = "0")
+GSE43591_X <- cof.var(genes = gpl,study = "GSE43591", treatment = w8, complete = T)
+
+w9 <- rep(c(1,0),8)
+
+GSE52139_T <- cof.var(genes = gpl,study = "GSE52139", treatment = w9, type = "1")
+GSE52139_C <- cof.var(genes = gpl,study = "GSE52139", treatment = w9, type = "0")
+GSE52139_X <- cof.var(genes = gpl,study = "GSE52139", treatment = w9, complete = T)
+
+w10 <- rep(c(0,1),6)
+
+GSE53716_T <- cof.var(genes = gpl,study = "GSE53716", treatment = w10, type = "1")
+GSE53716_C <- cof.var(genes = gpl,study = "GSE53716", treatment = w10, type = "0")
+GSE53716_X <- cof.var(genes = gpl,study = "GSE53716", treatment = w10, complete = T)
+
+w11 <- c(rep(0,7),rep(1,15))
+
+GSE59085_T <- cof.var(genes = gpl,study = "GSE59085", treatment = w11, type = "1")
+GSE59085_C <- cof.var(genes = gpl,study = "GSE59085", treatment = w11, type = "0")
+GSE59085_X <- cof.var(genes = gpl,study = "GSE59085", treatment = w11, complete = T)
