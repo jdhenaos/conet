@@ -16,6 +16,8 @@ gene.symbol <- function(GPL, d = "."){
   
   ta <- data.frame(sym$ID, gsub(" /// ","-",sym$`Gene Symbol`), stringsAsFactors = F)
   
+  # Names of each column
+  
   names(ta) <- c("probe","gene")
   
   return(ta)
