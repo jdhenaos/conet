@@ -1,6 +1,8 @@
-GeneSymbol <- function(GPL, d = "."){
-  # Va al directorio donde esta el archivo GPL
-  setwd(d)
+# gene.symbol
+# Juan David Henao Sanchez
+# Bioinformatics and Systems Biology | Universidad Nacional de Colombia
+
+gene.symbol <- function(GPL, d = "."){
   # Extrae la informacion del archivo .soft
   gpl <- getGEO(filename = paste0(GPL,".soft"))
   # Crea una tabla con todos los datos en el GPL
