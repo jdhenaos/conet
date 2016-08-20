@@ -3,7 +3,7 @@
 # Bioinformatics and Systems Biology | Universidad Nacional de Colombia
 
 gene.symbol <- function(GPL, d = "."){
-  
+
   # Extrae la informacion del archivo .soft
   
   gpl <- getGEO(filename = paste0(GPL,".soft"))
