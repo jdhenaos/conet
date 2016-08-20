@@ -1,3 +1,7 @@
+# internalfunctions
+# Juan David Henao Sanchez
+# Bioinformatics and Systems Biology | Universidad Nacional de Colombia
+
 .median.probe <- function(gene,array){
   
   marray <- as.data.frame(exprs(array))
@@ -16,10 +20,11 @@
                                         2:ncol(wowithw)],median)),row.names = i)
     g <- rbind.data.frame(g,a)
   }
+  
   return(g)
 }
 
-.max.probe <- function(array,gpl){
+.max.probe <- function(array,gene){
   
   eset <- exprs(array)
   
