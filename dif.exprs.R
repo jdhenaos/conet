@@ -52,11 +52,11 @@ dif.exprs <- function(affy,genes,treatment,fdr,NormalizeMethod,SummaryMethod,Dif
   
   if(DifferentialMethod == "sam"){
     
-    # Differential analysis using am method
+    # Differential analysis using sam method
     
     samr <- sam(data = eset,cl = treatment,B=100,rand=100)
     
-    # Obtain the fdr to different tresholds
+    # Obtain the fdr to different thresholds
     
     tab <- as.data.frame(samr@mat.fdr)
     
@@ -64,7 +64,7 @@ dif.exprs <- function(affy,genes,treatment,fdr,NormalizeMethod,SummaryMethod,Dif
     
     tab <- tab[tab$FDR >= fdr,]
     
-    # Menssage to empty result
+    # Message to empty result
     
     if(nrow(tab) == 0){stop("No differentially expressed genes found")}
     
@@ -72,11 +72,11 @@ dif.exprs <- function(affy,genes,treatment,fdr,NormalizeMethod,SummaryMethod,Dif
     
     value <- tab[nrow(tab),]
     
-    # Plotting the result of differential analisys
+    # Showing the result of differential analysis
     
     plot(samr,value$Delta)
     
-    # Summarizing the results of differential analisys
+    # Summarizing the results of differential analysis
     
     sum <- summary(samr,value$Delta,entrez=F)
     
@@ -84,21 +84,48 @@ dif.exprs <- function(affy,genes,treatment,fdr,NormalizeMethod,SummaryMethod,Dif
     
     dife <- sum@row.sig.genes
     
-    # Filter the expression matrix with the genes diferentially expressed
+    # Filter the expression matrix with the genes differentially expressed
     
     genes <- eset[dife,]
+    
+    # Showing the achieved fdr
     
     print(paste0("Achieved FDR: ",value$FDR))
     
   }else if(DifferentialMethod == "acde"){
+    
+    # Change the value of cases and controls
+    
     treatment[treatment == 0] <- 2
+    
+    # Differential analysis using acde method
+    
     acde <- stp(eset,treatment,R = 100, PER = T,alpha = fdr)
+    
+    # Showing the result of differential analysis
+    
     plot(acde)
+    
+    # Showing the achieved fdr
+    
     print(paste0("Achieved FDR: ",acde$astar))
+    
+    # Showing the threshold value
+    
     print(paste0("delta value: ",acde$tstar))
+    
+    # Create a data.frame object with the result of differential analysis
+    
     list <- data.frame(acde$gNames, acde$dgenes)
+    
+    # Obtain the name of genes differentially expressed
+    
     diff <- list[list$acde.dgenes != "no-diff.",]
+    
+    # Filter the expression matrix with the genes differentially expressed
+    
     genes <- eset[diff$acde.gNames,]
   }
-  return(genes)
+ 
+   return(genes)
 }
