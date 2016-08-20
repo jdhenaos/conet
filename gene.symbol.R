@@ -8,11 +8,11 @@ gene.symbol <- function(GPL, d = "."){
   
   gpl <- getGEO(filename = paste0(GPL,".soft"))
   
-  # Crea una tabla con todos los datos en el GPL
+  # Create a table object with all the data in the .soft file
   
   sym <- Table(gpl)
   
-  # Crea un data.frame con las sondas asociadas al gen al que corresponden
+  # Creates a data.frame object with the gene symbos to the probes associated
   
   ta <- data.frame(sym$ID, gsub(" /// ","-",sym$`Gene Symbol`), stringsAsFactors = F)
   
