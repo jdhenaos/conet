@@ -4,7 +4,7 @@
 
 gene.symbol <- function(GPL, d = "."){
 
-  # Extrae la informacion del archivo .soft
+  # Information extracted from the file .soft
   
   gpl <- getGEO(filename = paste0(GPL,".soft"))
   
