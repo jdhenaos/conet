@@ -2,53 +2,7 @@
 # Juan David Henao Sanchez
 # Bioinformatics and Systems Biology | Universidad Nacional de Colombia
 
-dif.exprs <- function(affy,genes,treatment,fdr,NormalizeMethod,SummaryMethod,DifferentialMethod){
-  
-  if(NormalizeMethod == "vsn"){
-    
-    # Normalizing with vsn method
-    
-    vsn <- expresso(affy,pmcorrect.method = "pmonly", bg.correct = F,
-                    normalize.method = "vsn", summary.method = "avgdiff")
-    
-    print("summarizing")
-    
-    if(SummaryMethod == "max"){
-      
-      # Summarizing using the high expression value
-      
-      eset <- .max.probe(vsn,genes) 
-      
-    }else if(SummaryMethod == "median"){
-      
-      # Summarizing using the median expression value
-      
-      eset <- .median.probe(gene,vsn)
-    }
-    
-  }else if(NormalizeMethod == "rma"){
-    
-    # Normalizing using ram method
-    
-    rma <- rma(affy) 
-    
-    print("summarizing")
-    
-    if(SummaryMethod == "max"){
-      
-      # Summarizing using the high expression value
-      
-      eset <- ProbeFilter(rma,genes) 
-      
-    }else if(SummaryMethod == "median"){
-      
-      # Summarizing using the median expression value
-      
-      eset <- medianProbe(genes,rma)
-    }
-  }
-  
-  print("Differential analysis")
+dif.exprs <- function(eset,treatment,fdr,DifferentialMethod){
   
   if(DifferentialMethod == "sam"){
     
@@ -126,6 +80,8 @@ dif.exprs <- function(affy,genes,treatment,fdr,NormalizeMethod,SummaryMethod,Dif
     
     genes <- eset[diff$acde.gNames,]
   }
- 
+  
+  # Returns the matrix of the genes differentially expressed
+  
    return(genes)
 }

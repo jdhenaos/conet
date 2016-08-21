@@ -2,7 +2,7 @@
 # Juan David Henao Sanchez
 # Bioinformatics and Systems Biology | Universidad Nacional de Colombia
 
-expr.mat <- function(affy,genes){
+expr.mat <- function(affy,genes,NormalizeMethod,SummaryMethod){
   
   if(NormalizeMethod == "vsn"){
     
@@ -47,6 +47,8 @@ expr.mat <- function(affy,genes){
       eset <- medianProbe(genes,rma)
     }
   }
+  
+  # Returns the gene expression matrix
   
   return(eset)
 }
