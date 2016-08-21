@@ -8,11 +8,11 @@ get.info <- function(GSE,GPL,dir="."){
   
   setwd(dir)
   
-  # Download the raw data from GEO DataSets database
+  # Downloads the raw data from GEO DataSets database
   
   sapply(as.vector(t(GSE)), getGEOSuppFiles)
   
-  # Obtain the name of the compressed data
+  # Obtains the name of the compressed data
   
   files <- dir(".")[grep("^GSE[0-9]",dir("."),ignore.case = T)]
   
@@ -22,7 +22,7 @@ get.info <- function(GSE,GPL,dir="."){
     untar(paste0(j,"/",j,"_RAW.tar"), exdir = paste0(j,"/"))
   }
   
-  # Download the .soft file of the microarray chip
+  # Downloads the .soft file of the microarray chip
   
   getGEOfile(GPL, destdir = ".")
 }

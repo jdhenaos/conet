@@ -175,7 +175,7 @@ create.net <- function(difexp, method){
     Ad[which(simil[,i]<value),i]<-0
   }
   
-  # Change the names of adjacency matrix to the genes names
+  # Changes the names of adjacency matrix to the genes names
   
   colnames(Ad)<-rownames(Ad)<-rownames(simil)
   
